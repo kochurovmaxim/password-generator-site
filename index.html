@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="head_title">Password generator site</title>
+    <style>
+      :root {
+        --font-size-base: 16px;
+        --color-text-base: #fff;
+        --color-bg-base: #212121;
+      }
+      html {
+        font-family: monospace;
+        font-size: var(--font-size-base);
+        color: var(--color-text-base);
+        font-feature-settings: normal;
+        font-variation-settings: normal;
+        -webkit-text-size-adjust: 100%;
+        background-color: var(--color-bg-base);
+      }
+      body {
+        display: grid;
+        place-items: center;
+        min-height: 100dvh;
+        padding: 1rem;
+        margin: 0;
+        box-sizing: border-box;
+
+        *,
+        *::before,
+        *::after {
+          box-sizing: inherit;
+        }
+      }
+      .password-generator {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-flow: row wrap;
+        gap: 1rem;
+        width: 100%;
+        max-width: 37.5rem;
+        min-height: 3.75rem;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        background-color: #181818;
+      }
+      button {
+        padding: 0.5rem 1rem;
+        border: 0;
+        font: inherit;
+        color: #000000;
+        background-color: #ffffff;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="ru">RU</button>
+      </div>
+      <h1 data-i18n="title">Password generator</h1>
+      <div class="password-generator">
+        <div class="password-generator__result">phmH)7D?$I1B4</div>
+        <div class="password-generator__buttons">
+          <button class="password-generator__copy-btn">Копировать</button>
+          <button class="password-generator__generate-btn">
+            Сгенерировать
+          </button>
+        </div>
+        <div class="password-generator__success-copy" style="display: none">
+          Успешно скопировано
+        </div>
+      </div>
+      <div class="password-settings">
+        <div class="password-settings__length">
+          <div>
+            Длина: <span class="password-settings__length-value">16</span>
+          </div>
+          <input
+            type="range"
+            min="1"
+            max="24"
+            step="1"
+            value="12"
+            name="length"
+            class="password-settings__length-range"
+          />
+        </div>
+        <div class="password-settings__symbols">
+          <div>Использовать</div>
+          <div>
+            <input
+              type="checkbox"
+              id="uppercase"
+              class="password-settings__check"
+              name="includeUppercase"
+              checked
+            />
+            <label for="uppercase">Заглавные буквы</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="lowercase"
+              class="password-settings__check"
+              name="includeLowercase"
+              checked
+            />
+            <label for="lowercase">Строчные буквы</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="numbers"
+              class="password-settings__check"
+              name="includeNumbers"
+              checked
+            />
+            <label for="numbers">Числа</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="symbols"
+              class="password-settings__check"
+              name="includeSymbols"
+              checked
+            />
+            <label for="symbols">Символы</label>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+  <script>
+    const translations = {
+      en: {
+        head_title: "Password generator site",
+        title: "Password generator",
+      },
+      ru: {
+        head_title: "Сайт генерации пароля",
+        title: "Генерация пароля",
+      },
+    };
+
+    let currentLang = localStorage.getItem("language") || "ru";
+
+    const elements = {
+      passwordResult: document.querySelector(".password-generator__result"),
+      generateBtn: document.querySelector(".password-generator__generate-btn"),
+      copyBtn: document.querySelector(".password-generator__copy-btn"),
+      lengthRange: document.querySelector(".password-settings__length-range"),
+      lengthValue: document.querySelector(".password-settings__length-value"),
+      settingInputs: document.querySelectorAll(".password-settings__check"),
+      successCopyEl: document.querySelector(
+        ".password-generator__success-copy",
+      ),
+    };
+
+    let passwordLength = 16;
+    let passwordValue = "";
+
+    const settingsPassword = {
+      includeUppercase: true,
+      includeLowercase: true,
+      includeNumbers: true,
+      includeSymbols: true,
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem("language", lang);
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        const key = element.getAttribute("data-i18n");
+        element.textContent = translations[lang][key] || key;
+      });
+
+      document.querySelectorAll(".lang-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+      });
+
+      const titleKey = document
+        .querySelector("title")
+        .getAttribute("data-i18n");
+      if (titleKey) {
+        document.title = translations[lang][titleKey] || document.title;
+      }
+    }
+
+    function generateSecurePassword(length, settings) {
+      console.log("length", length);
+      console.log("settings", settings);
+      const {
+        includeLowercase = true,
+        includeUppercase = true,
+        includeNumbers = true,
+        includeSymbols = true,
+      } = settings;
+
+      const charSets = {
+        lowercase: "abcdefghijklmnopqrstuvwxyz",
+        uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        numbers: "0123456789",
+        symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
+      };
+
+      let availableChars = "";
+
+      if (includeLowercase) {
+        availableChars += charSets.lowercase;
+      }
+
+      if (includeUppercase) {
+        availableChars += charSets.uppercase;
+      }
+
+      if (includeNumbers) {
+        availableChars += charSets.numbers;
+      }
+
+      if (includeSymbols) {
+        availableChars += charSets.symbols;
+      }
+
+      const array = new Uint8Array(length);
+
+      window.crypto.getRandomValues(array);
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += availableChars[array[i] % availableChars.length];
+      }
+
+      return password;
+    }
+
+    function copyToClipboard() {
+      navigator.clipboard
+        .writeText(passwordValue)
+        .then(() => {
+          elements.successCopyEl.style.display = "block";
+          setTimeout(() => {
+            elements.successCopyEl.style.display = "none";
+          }, 3000);
+          console.log("Скопировано!");
+        })
+        .catch((err) => {
+          console.error("Ошибка:", err);
+        });
+    }
+
+    function initPassword() {
+      passwordValue = generateSecurePassword(passwordLength, settingsPassword);
+      elements.passwordResult.textContent = passwordValue;
+    }
+
+    function changeSettingsPassword(event) {
+      const { name, checked } = event.target;
+
+      settingsPassword[name] = checked;
+
+      if (isValidSettings()) {
+        initPassword();
+      } else {
+        elements.passwordResult.textContent =
+          "Должна бы выбрана хотя бы одна настройка";
+      }
+    }
+
+    function isValidSettings() {
+      return (
+        Object.values(settingsPassword).filter((s) => s === true).length > 0
+      );
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setLanguage(currentLang);
+      initPassword();
+
+      document.querySelectorAll(".lang-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          setLanguage(button.dataset.lang);
+        });
+      });
+
+      if (!localStorage.getItem("language")) {
+        const browserLang = navigator.language.split("-")[0];
+        if (translations[browserLang]) {
+          setLanguage(browserLang);
+        }
+      }
+
+      elements.settingInputs.forEach((input) =>
+        input.addEventListener("change", changeSettingsPassword),
+      );
+
+      elements.generateBtn.addEventListener("click", initPassword);
+
+      elements.lengthRange.addEventListener("input", (event) => {
+        const { value, name } = event.target;
+        passwordLength = value;
+        elements.lengthValue.textContent = value;
+      });
+
+      elements.lengthRange.addEventListener("change", initPassword);
+
+      elements.copyBtn.addEventListener("click", copyToClipboard);
+    });
+  </script>
+</html>
