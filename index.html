@@ -6,9 +6,20 @@
     <title data-i18n="head_title">Password generator site</title>
     <style>
       :root {
+        --color-bg-page: #000;
+
+        --title-font-size: 4rem;
+        --title-weight: 700;
+        --title-color-text: transparent;
+        --title-gradient: linear-gradient(to bottom, #fff 30%, transparent 50%);
+        --title-stroke: 0.0625rem;
+        --title-stroke-color: rgb(255 255 255 / 0.5);
+
+        --button-color-bg: #007bff;
+        --button-color-text: #fff;
+
         --font-size-base: 16px;
         --color-text-base: #fff;
-        --color-bg-base: #212121;
       }
       html {
         font-family: monospace;
@@ -17,13 +28,13 @@
         font-feature-settings: normal;
         font-variation-settings: normal;
         -webkit-text-size-adjust: 100%;
-        background-color: var(--color-bg-base);
+        background-color: var(--color-bg-page);
       }
       body {
         display: grid;
         place-items: center;
         min-height: 100dvh;
-        padding: 1rem;
+        padding: 2rem;
         margin: 0;
         box-sizing: border-box;
 
@@ -33,25 +44,86 @@
           box-sizing: inherit;
         }
       }
+      h1 {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        margin-block-end: 2rem;
+        font-family: monospace;
+        font-size: var(--title-font-size);
+        font-weight: var(--title-weight);
+        line-height: 1;
+        text-align: center;
+        text-transform: uppercase;
+        color: transparent;
+        background: var(--title-gradient);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-stroke: var(--title-stroke) var(--title-stroke-color);
+        paint-order: stroke fill;
+      }
+      .lang-switcher {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+      }
       .password-generator {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        flex-flow: row wrap;
-        gap: 1rem;
-        width: 100%;
-        max-width: 37.5rem;
-        min-height: 3.75rem;
-        padding: 1rem 2rem;
-        border-radius: 8px;
-        background-color: #181818;
+        align-items: center;
+        gap: 0.5rem;
+        width: 60vw;
+        max-width: 56.25rem;
+        margin-block-end: 1rem;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1.5rem;
+        text-align: center;
+        background-color: #191919;
       }
-      button {
-        padding: 0.5rem 1rem;
+      .password-generator__buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .password-generator__btn {
+        display: grid;
+        place-items: center;
+        min-width: 2.75rem;
+        min-height: 2.75rem;
         border: 0;
-        font: inherit;
-        color: #000000;
-        background-color: #ffffff;
+        color: var(--button-color-text);
+        background-color: var(--button-color-bg);
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .password-settings {
+        width: 60vw;
+        max-width: 56.25rem;
+        padding: 1.5rem;
+        border: 1px solid #333;
+        border-radius: 12px;
+      }
+      .password-settings__length-range {
+        width: 100%;
+      }
+      .password-settings__symbols {
+        margin-block-start: 1rem;
+      }
+      .password-settings__length-title,
+      .password-settings__symbols-title {
+        margin: 0;
+        margin-block-end: 1rem;
+      }
+      .password-settings__symbols-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+        flex-flow: row wrap;
+      }
+      .password-settings__symbols-item {
+        padding: 1rem;
+        border-radius: 6px;
+        background-color: #121212;
         cursor: pointer;
       }
     </style>
@@ -62,24 +134,69 @@
         <button class="lang-btn" data-lang="en">EN</button>
         <button class="lang-btn" data-lang="ru">RU</button>
       </div>
-      <h1 data-i18n="title">Password generator</h1>
-      <div class="password-generator">
+      <h1 data-i18n="title"><span>Password</span><span>generator</span></h1>
+      <section class="password-generator">
         <div class="password-generator__result">phmH)7D?$I1B4</div>
         <div class="password-generator__buttons">
-          <button class="password-generator__copy-btn">Копировать</button>
-          <button class="password-generator__generate-btn">
-            Сгенерировать
+          <button class="password-generator__btn" id="button-copy">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org"
+            >
+              <path
+                d="M8 4V16C8 17.1046 8.89543 18 10 18H18C19.1046 18 20 17.1046 20 16V7.24264C20 6.71221 19.7893 6.20349 19.4142 5.82843L16.1716 2.58579C15.7965 2.21071 15.2878 2 14.7574 2H10C8.89543 2 8 2.89543 8 4Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M16 22H6C4.89543 22 4 21.1046 4 20V8"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <button class="password-generator__btn" id="button-generate">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org"
+            >
+              <path
+                d="M21 4V10H15"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M19.8 15C19.1 17.1 17.6 18.9 15.7 20.1C13.8 21.3 11.5 21.6 9.4 21C7.3 20.4 5.5 19 4.3 17.1C3.1 15.2 2.7 12.9 3.2 10.8C3.7 8.7 5 6.9 6.9 5.7C8.8 4.5 11.1 4.1 13.2 4.6C15.3 5.1 17.1 6.4 18.3 8.2L21 10"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
           </button>
         </div>
         <div class="password-generator__success-copy" style="display: none">
           Успешно скопировано
         </div>
-      </div>
-      <div class="password-settings">
+      </section>
+
+      <section class="password-settings">
         <div class="password-settings__length">
-          <div>
+          <h3 class="password-settings__length-title">
             Длина: <span class="password-settings__length-value">16</span>
-          </div>
+          </h3>
           <input
             type="range"
             min="1"
@@ -88,230 +205,237 @@
             value="12"
             name="length"
             class="password-settings__length-range"
+            aria-label="Длина пароля"
           />
         </div>
         <div class="password-settings__symbols">
-          <div>Использовать</div>
-          <div>
-            <input
-              type="checkbox"
-              id="uppercase"
-              class="password-settings__check"
-              name="includeUppercase"
-              checked
-            />
-            <label for="uppercase">Заглавные буквы</label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              id="lowercase"
-              class="password-settings__check"
-              name="includeLowercase"
-              checked
-            />
-            <label for="lowercase">Строчные буквы</label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              id="numbers"
-              class="password-settings__check"
-              name="includeNumbers"
-              checked
-            />
-            <label for="numbers">Числа</label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              id="symbols"
-              class="password-settings__check"
-              name="includeSymbols"
-              checked
-            />
-            <label for="symbols">Символы</label>
+          <h3 class="password-settings__symbols-title">Использовать:</h3>
+          <div class="password-settings__symbols-list">
+            <label for="uppercase" class="password-settings__symbols-item">
+              <input
+                type="checkbox"
+                id="uppercase"
+                class="password-settings__check"
+                name="includeUppercase"
+                checked
+              />
+              <span>Заглавные буквы</span>
+            </label>
+            <label for="lowercase" class="password-settings__symbols-item">
+              <input
+                type="checkbox"
+                id="lowercase"
+                class="password-settings__check"
+                name="includeLowercase"
+                checked
+              />
+              <span>Строчные буквы</span>
+            </label>
+            <label for="numbers" class="password-settings__symbols-item">
+              <input
+                type="checkbox"
+                id="numbers"
+                class="password-settings__check"
+                name="includeNumbers"
+                checked
+              />
+              <span>Числа</span>
+            </label>
+            <label for="symbols" class="password-settings__symbols-item">
+              <input
+                type="checkbox"
+                id="symbols"
+                class="password-settings__check"
+                name="includeSymbols"
+                checked
+              />
+              <span>Символы</span>
+            </label>
           </div>
         </div>
-      </div>
+      </section>
     </main>
   </body>
   <script>
-    const translations = {
-      en: {
-        head_title: "Password generator site",
-        title: "Password generator",
-      },
-      ru: {
-        head_title: "Сайт генерации пароля",
-        title: "Генерация пароля",
-      },
-    };
-
-    let currentLang = localStorage.getItem("language") || "ru";
-
-    const elements = {
-      passwordResult: document.querySelector(".password-generator__result"),
-      generateBtn: document.querySelector(".password-generator__generate-btn"),
-      copyBtn: document.querySelector(".password-generator__copy-btn"),
-      lengthRange: document.querySelector(".password-settings__length-range"),
-      lengthValue: document.querySelector(".password-settings__length-value"),
-      settingInputs: document.querySelectorAll(".password-settings__check"),
-      successCopyEl: document.querySelector(
-        ".password-generator__success-copy",
-      ),
-    };
-
-    let passwordLength = 16;
-    let passwordValue = "";
-
-    const settingsPassword = {
-      includeUppercase: true,
-      includeLowercase: true,
-      includeNumbers: true,
-      includeSymbols: true,
-    };
-
-    function setLanguage(lang) {
-      currentLang = lang;
-      localStorage.setItem("language", lang);
-      document.documentElement.lang = lang;
-
-      document.querySelectorAll("[data-i18n]").forEach((element) => {
-        const key = element.getAttribute("data-i18n");
-        element.textContent = translations[lang][key] || key;
-      });
-
-      document.querySelectorAll(".lang-btn").forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.lang === lang);
-      });
-
-      const titleKey = document
-        .querySelector("title")
-        .getAttribute("data-i18n");
-      if (titleKey) {
-        document.title = translations[lang][titleKey] || document.title;
-      }
-    }
-
-    function generateSecurePassword(length, settings) {
-      console.log("length", length);
-      console.log("settings", settings);
-      const {
-        includeLowercase = true,
-        includeUppercase = true,
-        includeNumbers = true,
-        includeSymbols = true,
-      } = settings;
-
-      const charSets = {
+    class PasswordGenerator {
+      static CHAR_SETS = {
         lowercase: "abcdefghijklmnopqrstuvwxyz",
         uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
         numbers: "0123456789",
         symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
       };
 
-      let availableChars = "";
-
-      if (includeLowercase) {
-        availableChars += charSets.lowercase;
+      constructor() {
+        this.settings = {
+          includeUppercase: true,
+          includeLowercase: true,
+          includeNumbers: true,
+          includeSymbols: true,
+        };
+        this.length = 16;
       }
 
-      if (includeUppercase) {
-        availableChars += charSets.uppercase;
+      setSettings(settings) {
+        this.settings = { ...this.settings, ...settings };
       }
 
-      if (includeNumbers) {
-        availableChars += charSets.numbers;
+      setLength(length) {
+        this.length = Math.max(1, Math.min(64, parseInt(length) || 16));
       }
 
-      if (includeSymbols) {
-        availableChars += charSets.symbols;
+      getAvailableChars() {
+        let chars = "";
+        if (this.settings.includeLowercase)
+          chars += PasswordGenerator.CHAR_SETS.lowercase;
+        if (this.settings.includeUppercase)
+          chars += PasswordGenerator.CHAR_SETS.uppercase;
+        if (this.settings.includeNumbers)
+          chars += PasswordGenerator.CHAR_SETS.numbers;
+        if (this.settings.includeSymbols)
+          chars += PasswordGenerator.CHAR_SETS.symbols;
+        return chars;
       }
 
-      const array = new Uint8Array(length);
-
-      window.crypto.getRandomValues(array);
-
-      let password = "";
-      for (let i = 0; i < length; i++) {
-        password += availableChars[array[i] % availableChars.length];
+      getRequiredCharSets() {
+        const sets = [];
+        if (this.settings.includeLowercase)
+          sets.push(PasswordGenerator.CHAR_SETS.lowercase);
+        if (this.settings.includeUppercase)
+          sets.push(PasswordGenerator.CHAR_SETS.uppercase);
+        if (this.settings.includeNumbers)
+          sets.push(PasswordGenerator.CHAR_SETS.numbers);
+        if (this.settings.includeSymbols)
+          sets.push(PasswordGenerator.CHAR_SETS.symbols);
+        return sets;
       }
 
-      return password;
-    }
+      validate() {
+        const availableChars = this.getAvailableChars();
+        if (availableChars.length === 0) {
+          return { valid: false, error: "no_settings" };
+        }
+        if (this.length < 1) {
+          return { valid: false, error: "min_length" };
+        }
+        return { valid: true };
+      }
 
-    function copyToClipboard() {
-      navigator.clipboard
-        .writeText(passwordValue)
-        .then(() => {
-          elements.successCopyEl.style.display = "block";
-          setTimeout(() => {
-            elements.successCopyEl.style.display = "none";
-          }, 3000);
-          console.log("Скопировано!");
-        })
-        .catch((err) => {
-          console.error("Ошибка:", err);
+      generate() {
+        const validation = this.validate();
+        if (!validation.valid) {
+          throw new Error(validation.error);
+        }
+
+        const requiredSets = this.getRequiredCharSets();
+        let password = "";
+
+        requiredSets.forEach((charSet) => {
+          const randomIndex = this.getRandomInt(0, charSet.length - 1);
+          password += charSet[randomIndex];
         });
-    }
 
-    function initPassword() {
-      passwordValue = generateSecurePassword(passwordLength, settingsPassword);
-      elements.passwordResult.textContent = passwordValue;
-    }
+        const availableChars = this.getAvailableChars();
+        while (password.length < this.length) {
+          const randomIndex = this.getRandomInt(0, availableChars.length - 1);
+          password += availableChars[randomIndex];
+        }
 
-    function changeSettingsPassword(event) {
-      const { name, checked } = event.target;
+        return this.shuffleString(password);
+      }
 
-      settingsPassword[name] = checked;
+      getRandomInt(min, max) {
+        const range = max - min + 1;
+        const randomValues = new Uint32Array(1);
+        window.crypto.getRandomValues(randomValues);
+        return min + (randomValues[0] % range);
+      }
 
-      if (isValidSettings()) {
-        initPassword();
-      } else {
-        elements.passwordResult.textContent =
-          "Должна бы выбрана хотя бы одна настройка";
+      shuffleString(str) {
+        const array = str.split("");
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = this.getRandomInt(0, i);
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array.join("");
       }
     }
 
-    function isValidSettings() {
-      return (
-        Object.values(settingsPassword).filter((s) => s === true).length > 0
-      );
+    class App {
+      constructor() {
+        this.generator = new PasswordGenerator();
+
+        this.elements = {
+          passwordResult: document.querySelector(".password-generator__result"),
+          generateBtn: document.querySelector("#button-generate"),
+          copyBtn: document.querySelector("#button-copy"),
+          lengthRange: document.querySelector(
+            ".password-settings__length-range",
+          ),
+          lengthValue: document.querySelector(
+            ".password-settings__length-value",
+          ),
+          settingInputs: document.querySelectorAll(".password-settings__check"),
+          successCopyEl: document.querySelector(
+            ".password-generator__success-copy",
+          ),
+        };
+
+        this.init();
+      }
+
+      init() {
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        this.elements.generateBtn.addEventListener("click", () =>
+          this.generatePassword(),
+        );
+
+        this.elements.copyBtn.addEventListener("click", () =>
+          this.copyPassword(),
+        );
+
+        this.elements.lengthRange.addEventListener("input", (event) => {
+          const { value } = event.target;
+
+          this.generator.setLength(value);
+          this.elements.lengthValue.textContent = value;
+        });
+
+        this.elements.lengthRange.addEventListener("change", () =>
+          this.generatePassword(),
+        );
+
+        this.elements.settingInputs.forEach((checkbox) => {
+          checkbox.addEventListener("change", (event) => {
+            const { name, checked } = event.target;
+            this.generator.setSettings({ [name]: checked });
+            this.generatePassword();
+          });
+        });
+      }
+
+      generatePassword() {
+        try {
+          const password = this.generator.generate();
+          this.elements.passwordResult.textContent = password;
+        } catch (e) {}
+      }
+
+      async copyPassword() {
+        try {
+          await navigator.clipboard.writeText(
+            this.elements.passwordResult.textContent,
+          );
+        } catch (error) {
+          console.error("Copy error:", error);
+        }
+      }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      setLanguage(currentLang);
-      initPassword();
-
-      document.querySelectorAll(".lang-btn").forEach((button) => {
-        button.addEventListener("click", () => {
-          setLanguage(button.dataset.lang);
-        });
-      });
-
-      if (!localStorage.getItem("language")) {
-        const browserLang = navigator.language.split("-")[0];
-        if (translations[browserLang]) {
-          setLanguage(browserLang);
-        }
-      }
-
-      elements.settingInputs.forEach((input) =>
-        input.addEventListener("change", changeSettingsPassword),
-      );
-
-      elements.generateBtn.addEventListener("click", initPassword);
-
-      elements.lengthRange.addEventListener("input", (event) => {
-        const { value, name } = event.target;
-        passwordLength = value;
-        elements.lengthValue.textContent = value;
-      });
-
-      elements.lengthRange.addEventListener("change", initPassword);
-
-      elements.copyBtn.addEventListener("click", copyToClipboard);
+      new App();
     });
   </script>
 </html>
