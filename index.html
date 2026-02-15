@@ -234,7 +234,7 @@
           </h3>
           <input
             type="range"
-            min="1"
+            min="4"
             max="24"
             step="1"
             value="12"
@@ -288,6 +288,20 @@
             </label>
           </div>
         </div>
+        <div class="password-settings__symbols">
+          <h3 class="password-settings__symbols-title">Исключить:</h3>
+          <div class="password-settings__symbols-list">
+            <label for="exclude" class="password-settings__symbols-item">
+              <input
+                type="checkbox"
+                id="exclude"
+                class="password-settings__check"
+                name="exclude"
+              />
+              <span>0, O, 1, l, I, |</span>
+            </label>
+          </div>
+        </div>
       </section>
     </main>
   </body>
@@ -299,6 +313,12 @@
         numbers: "0123456789",
         symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
       };
+      static CHAR_SETS_EXCLUDE = {
+        lowercase: "abcdefghijkmnopqrstuvwxyz",
+        uppercase: "ABCDEFGHJKLMNPQRSTUVWXYZ",
+        numbers: "23456789",
+        symbols: "!@#$%^&*()_+-=[]{};:,.<>?",
+      };
 
       constructor() {
         this.settings = {
@@ -306,6 +326,7 @@
           includeLowercase: true,
           includeNumbers: true,
           includeSymbols: true,
+          exclude: false,
         };
         this.length = 16;
       }
@@ -315,32 +336,48 @@
       }
 
       setLength(length) {
-        this.length = Math.max(1, Math.min(64, parseInt(length) || 16));
+        this.length = Math.max(4, Math.min(64, parseInt(length) || 16));
       }
 
       getAvailableChars() {
         let chars = "";
         if (this.settings.includeLowercase)
-          chars += PasswordGenerator.CHAR_SETS.lowercase;
+          chars += this.settings.exclude
+            ? PasswordGenerator.CHAR_SETS_EXCLUDE.lowercase
+            : PasswordGenerator.CHAR_SETS.lowercase;
         if (this.settings.includeUppercase)
-          chars += PasswordGenerator.CHAR_SETS.uppercase;
+          chars += this.settings.exclude
+            ? PasswordGenerator.CHAR_SETS_EXCLUDE.uppercase
+            : PasswordGenerator.CHAR_SETS.uppercase;
         if (this.settings.includeNumbers)
-          chars += PasswordGenerator.CHAR_SETS.numbers;
+          chars += this.settings.exclude
+            ? PasswordGenerator.CHAR_SETS_EXCLUDE.numbers
+            : PasswordGenerator.CHAR_SETS.numbers;
         if (this.settings.includeSymbols)
-          chars += PasswordGenerator.CHAR_SETS.symbols;
+          chars += this.settings.exclude
+            ? PasswordGenerator.CHAR_SETS_EXCLUDE.symbols
+            : PasswordGenerator.CHAR_SETS.symbols;
         return chars;
       }
 
       getRequiredCharSets() {
         const sets = [];
         if (this.settings.includeLowercase)
-          sets.push(PasswordGenerator.CHAR_SETS.lowercase);
+          this.settings.exclude
+            ? sets.push(PasswordGenerator.CHAR_SETS_EXCLUDE.lowercase)
+            : sets.push(PasswordGenerator.CHAR_SETS.lowercase);
         if (this.settings.includeUppercase)
-          sets.push(PasswordGenerator.CHAR_SETS.uppercase);
+          this.settings.exclude
+            ? sets.push(PasswordGenerator.CHAR_SETS_EXCLUDE.uppercase)
+            : sets.push(PasswordGenerator.CHAR_SETS.uppercase);
         if (this.settings.includeNumbers)
-          sets.push(PasswordGenerator.CHAR_SETS.numbers);
+          this.settings.exclude
+            ? sets.push(PasswordGenerator.CHAR_SETS_EXCLUDE.numbers)
+            : sets.push(PasswordGenerator.CHAR_SETS.numbers);
         if (this.settings.includeSymbols)
-          sets.push(PasswordGenerator.CHAR_SETS.symbols);
+          this.settings.exclude
+            ? sets.push(PasswordGenerator.CHAR_SETS_EXCLUDE.symbols)
+            : sets.push(PasswordGenerator.CHAR_SETS.symbols);
         return sets;
       }
 
@@ -349,7 +386,7 @@
         if (availableChars.length === 0) {
           return { valid: false, error: "no_settings" };
         }
-        if (this.length < 1) {
+        if (this.length < 4) {
           return { valid: false, error: "min_length" };
         }
         return { valid: true };
