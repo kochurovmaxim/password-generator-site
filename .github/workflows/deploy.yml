@@ -53,3 +53,22 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-reg:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+
+      - name: Deploy to REG.RU
+        uses: pressidium/lftp-mirror-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          user: ${{ secrets.USERNAME }}
+          pass: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          localDir: "./dist"
+          remoteDir: ${{ secrets.REMOTE_DIR }}
+          reverse: true
