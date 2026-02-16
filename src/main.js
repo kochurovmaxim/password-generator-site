@@ -2,11 +2,13 @@ import "./style.css";
 
 import { I18n } from "./i18n";
 import { PasswordGenerator } from "./password-generator";
+import { Notification } from "./notification";
 
 class App {
   constructor() {
     this.generator = new PasswordGenerator();
     this.i18n = new I18n();
+    this.notification = new Notification();
 
     this.elements = {
       passwordResult: document.querySelector(".password-generator__result"),
@@ -66,7 +68,24 @@ class App {
     try {
       const password = this.generator.generate();
       this.elements.passwordResult.textContent = password;
-    } catch (e) {}
+    } catch (error) {
+      let errorMessage = "";
+      switch (error.message) {
+        case "no_settings": {
+          errorMessage = this.i18n.get("error_no_settings");
+          break;
+        }
+        case "min_length": {
+          errorMessage = this.i18n.get("error_min_length");
+          break;
+        }
+        default:
+          errorMessage = this.i18n.get("error_generation");
+      }
+
+      this.elements.passwordResult.textContent = errorMessage;
+      this.notification.error(errorMessage);
+    }
   }
 
   async copyPassword() {
@@ -74,7 +93,9 @@ class App {
       await navigator.clipboard.writeText(
         this.elements.passwordResult.textContent,
       );
+      this.notification.success(this.i18n.get("copied"));
     } catch (error) {
+      this.notification.error(this.i18n.get("error_copy"));
       console.error("Copy error:", error);
     }
   }

@@ -11,6 +11,11 @@ export class I18n {
         numbers: "Numbers",
         symbols: "Symbols",
         exclude: "Exclude:",
+        error_no_settings: "At least one character type must be selected",
+        error_generation: "Error generating password",
+        error_min_length: "Minimum password length: 4 characters",
+        error_copy: "Failed to copy password",
+        copied: "Copied!",
       },
       ru: {
         head_title: "Генератор пароля",
@@ -22,6 +27,11 @@ export class I18n {
         numbers: "Числа",
         symbols: "Символы",
         exclude: "Исключить:",
+        error_no_settings: "Должен быть выбран хотя бы один тип символов",
+        error_generation: "Ошибка генерации пароля",
+        error_min_length: "Минимальная длина пароля: 4 символа",
+        error_copy: "Не удалось скопировать пароль",
+        copied: "Скопировано!",
       },
     };
 
