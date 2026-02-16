@@ -2,7 +2,7 @@ export class Notification {
   constructor() {
     this.container = document.createElement("div");
     this.container.className = "notification-container";
-    document.body.appendChild(this.container);
+    document.document.querySelector("main").appendChild(this.container);
   }
 
   show(message, type = "success") {
