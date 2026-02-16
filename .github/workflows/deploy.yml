@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages and REG.RU
 
 on:
   push:
@@ -54,10 +54,9 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  deploy-reg:
+  deploy-regru:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -68,13 +67,14 @@ jobs:
       - name: Check downloaded files
         run: ls -la ./dist
 
-      - name: Deploy to REG.RU
-        uses: pressidium/lftp-mirror-action@v1
+      - name: Deploy to REG.RU via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          host: ${{ secrets.HOST }}
-          user: ${{ secrets.USERNAME }}
-          pass: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          localDir: "./dist"
-          remoteDir: ${{ secrets.REMOTE_DIR }}
-          reverse: true
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT || '21' }}
+          local-dir: ./dist/
+          server-dir: ${{ secrets.FTP_REMOTE_DIR || '/' }}
+          protocol: ftp
+          dangerous-clean-slate: true
