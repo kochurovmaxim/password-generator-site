@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages and REG.RU
+name: Deploy to GitHub Pages, Profile and GET-PASS
 
 on:
   push:
@@ -93,5 +93,29 @@ jobs:
           port: ${{ secrets.FTP_PORT || '21' }}
           local-dir: ./dist/
           server-dir: ${{ secrets.FTP_REMOTE_DIR || '/www/' }}
+          protocol: ftp
+          dangerous-clean-slate: true
+  deploy-get-pass:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact for REG.RU
+        uses: actions/download-artifact@v4
+        with:
+          name: regru-site
+          path: ./dist
+
+      - name: Check files for REG.RU
+        run: ls -la ./dist
+
+      - name: Deploy to REG.RU via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST_MAIN }}
+          username: ${{ secrets.FTP_USERNAME_MAIN }}
+          password: ${{ secrets.FTP_PASSWORD_MAIN }}
+          port: ${{ secrets.FTP_PORT_MAIN || '21' }}
+          local-dir: ./dist/
+          server-dir: ${{ secrets.FTP_REMOTE_DIR_MAIN || '/www/' }}
           protocol: ftp
           dangerous-clean-slate: true
