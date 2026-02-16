@@ -3,5 +3,15 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 
 export default defineConfig({
   plugins: [viteSingleFile()],
-  base: "/",
+  base: "./",
+  build: {
+    target: "esnext",
+    assetsInlineLimit: 100000000,
+    cssCodeSplit: false,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
 });
