@@ -32,16 +32,33 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Add .nojekyll file
+      - name: Add .nojekyll file for GitHub Pages
         run: touch ./dist/.nojekyll
+
+      - name: Create clean version for REG.RU (without .nojekyll)
+        run: |
+          # Копируем dist в отдельную папку без .nojekyll
+          mkdir -p ./dist-regru
+          cp -r ./dist/* ./dist-regru/
+          # Проверяем содержимое обеих папок
+          echo "GitHub Pages files:"
+          ls -la ./dist
+          echo "REG.RU files:"
+          ls -la ./dist-regru
 
       - name: List build output
         run: ls -la ./dist
 
-      - name: Upload artifact
+      - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: "./dist"
+
+      - name: Upload artifact for REG.RU
+        uses: actions/upload-artifact@v4
+        with:
+          name: regru-site
+          path: "./dist-regru"
 
   deploy:
     environment:
@@ -58,23 +75,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
+      - name: Download artifact for REG.RU
         uses: actions/download-artifact@v4
         with:
-          name: github-pages
-          path: ./downloaded-artifact
+          name: regru-site
+          path: ./dist
 
-      - name: Extract artifact
-        run: |
-          # Проверяем содержимое скачанного артефакта
-          ls -la ./downloaded-artifact
-
-          # Извлекаем содержимое artifact.tar в папку ./dist
-          mkdir -p ./dist
-          tar -xvf ./downloaded-artifact/artifact.tar -C ./dist
-
-          # Проверяем извлеченные файлы
-          ls -la ./dist
+      - name: Check files for REG.RU
+        run: ls -la ./dist
 
       - name: Deploy to REG.RU via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -84,6 +92,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT || '21' }}
           local-dir: ./dist/
-          server-dir: ${{ secrets.FTP_REMOTE_DIR || '/' }}
+          server-dir: ${{ secrets.FTP_REMOTE_DIR || '/www/' }}
           protocol: ftp
           dangerous-clean-slate: true
