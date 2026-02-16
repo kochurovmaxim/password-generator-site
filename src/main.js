@@ -68,6 +68,9 @@ class App {
     try {
       const password = this.generator.generate();
       this.elements.passwordResult.textContent = password;
+      this.elements.copyBtn.disabled = false;
+      this.elements.generateBtn.disabled = false;
+      this.elements.passwordResult.classList.remove("error");
     } catch (error) {
       let errorMessage = "";
       switch (error.message) {
@@ -83,6 +86,9 @@ class App {
           errorMessage = this.i18n.get("error_generation");
       }
 
+      this.elements.copyBtn.disabled = true;
+      this.elements.generateBtn.disabled = true;
+      this.elements.passwordResult.classList.add("error");
       this.elements.passwordResult.textContent = errorMessage;
       this.notification.error(errorMessage);
     }

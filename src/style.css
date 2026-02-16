@@ -112,6 +112,10 @@ h1 {
 .password-generator__result {
   word-break: break-all;
   user-select: all;
+
+  &.error {
+    color: var(--color-error);
+  }
 }
 .password-generator__buttons {
   display: -webkit-box;
@@ -168,6 +172,12 @@ h1 {
   border-radius: 6px;
   cursor: pointer;
   z-index: 1;
+
+  &:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: default;
+  }
 }
 .password-settings {
   padding: 1.5rem;
