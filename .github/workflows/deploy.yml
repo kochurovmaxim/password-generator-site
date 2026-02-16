@@ -62,10 +62,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: github-pages
-          path: ./dist
+          path: ./downloaded-artifact
 
-      - name: Check downloaded files
-        run: ls -la ./dist
+      - name: Extract artifact
+        run: |
+          # Проверяем содержимое скачанного артефакта
+          ls -la ./downloaded-artifact
+
+          # Извлекаем содержимое artifact.tar в папку ./dist
+          mkdir -p ./dist
+          tar -xvf ./downloaded-artifact/artifact.tar -C ./dist
+
+          # Проверяем извлеченные файлы
+          ls -la ./dist
 
       - name: Deploy to REG.RU via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
